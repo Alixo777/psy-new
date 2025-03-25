@@ -110,8 +110,12 @@
       localStorage.getItem('token')
       document.getElementById('panicExamForm').addEventListener('submit', function(event) {
         event.preventDefault();
-        const formData = new FormData(event.target);
-        const data = Object.fromEntries(formData.entries());
+        // const formData = new FormData(event.target);
+        const data = {};
+
+        event.target.querySelectorAll('input[type="checkbox"]').forEach(input => {
+          data[input.name] = input.checked;
+        });
 
         fetch('/api/eachExams/panic', {
           method: 'POST',

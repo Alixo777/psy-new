@@ -58,7 +58,8 @@ router.post('/:examType', async (req, res) => {
     try {
         const exam = new exams[examType].model(req.body);
         await exam.save();
-        res.json(exam);
+        const message = `New ${examType} exam saved successfully.`;
+        res.json({ message, exam });
     } catch (error) {
         res.status(500).json({ message: "Error saving exam", error: error.message });
     }
