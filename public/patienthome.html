@@ -18,40 +18,27 @@
 <body class="bg-gray-100">
   <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
     <div id="progress-indicator" class="mb-8 flex items-center justify-between">
-      <div class="flex items-center">
-        <div id="step-1-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-active">1</div>
-        <span class="ml-2 text-sm font-medium">Choose Exam</span>
-      </div>
       <div class="flex-1 h-px bg-gray-300 mx-4"></div>
       <div class="flex items-center">
-        <div id="step-2-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-inactive">2</div>
+        <div id="step-2-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-active">1</div>
         <span class="ml-2 text-sm font-medium">Select Therapist</span>
       </div>
       <div class="flex-1 h-px bg-gray-300 mx-4"></div>
       <div class="flex items-center">
-        <div id="step-3-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-inactive">3</div>
+        <div id="step-3-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-inactive">2</div>
         <span class="ml-2 text-sm font-medium">Schedule</span>
       </div>
       <div class="flex-1 h-px bg-gray-300 mx-4"></div>
       <div class="flex items-center">
-        <div id="step-4-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-inactive">4</div>
+        <div id="step-4-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-inactive">3</div>
         <span class="ml-2 text-sm font-medium">Confirm</span>
       </div>
     </div>
 
-    <div id="step-1" class="step">
-      <h2 class="text-2xl font-bold mb-4">Select an Exam</h2>
-      <div id="exam-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-      <div class="mt-6 flex justify-end">
-        <button id="next-step-1" class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300" disabled>Next</button>
-      </div>
-    </div>
-
-    <div id="step-2" class="step hidden">
+    <div id="step-2" class="step">
       <h2 class="text-2xl font-bold mb-4">Select a Therapist</h2>
       <div id="therapist-list" class="space-y-4"></div>
       <div class="mt-6 flex justify-between">
-        <button id="back-step-2" class="px-4 py-2 border border-gray-300 rounded-lg">Back</button>
         <button id="next-step-2" class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300" disabled>Next</button>
       </div>
     </div>
@@ -106,7 +93,7 @@
     let token = localStorage.getItem("token")
     console.log(token);
     document.addEventListener('DOMContentLoaded', () => {
-      let step = 1;
+      let step = 2;
       let selectedExam = null;
       let selectedTherapist = null;
       let selectedDate = null;
@@ -143,7 +130,7 @@
       const updateProgressIndicator = () => {
         document.querySelectorAll('.step-active').forEach(el => el.classList.remove('step-active'));
         document.querySelectorAll('.step-inactive').forEach(el => el.classList.remove('step-inactive'));
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 2; i <= 4; i++) {
           const indicator = document.getElementById(`step-${i}-indicator`);
           if (i <= step) {
             indicator.classList.add('step-active');
@@ -173,7 +160,7 @@
           examDiv.addEventListener('click', () => {
             selectedExam = exam;
             renderExams();
-            document.getElementById('next-step-1').disabled = false;
+            document.getElementById('next-step-2').disabled = false;
           });
           examList.appendChild(examDiv);
         });
@@ -244,11 +231,6 @@
         document.getElementById('confirm-date-time').textContent = `${formatDate(selectedDate)} at ${selectedTime}`;
       };
 
-      document.getElementById('next-step-1').addEventListener('click', () => {
-        step = 2;
-        showStep(step);
-      });
-
       document.getElementById('next-step-2').addEventListener('click', () => {
         step = 3;
         showStep(step);
@@ -258,11 +240,6 @@
         step = 4;
         showStep(step);
         renderConfirmation();
-      });
-
-      document.getElementById('back-step-2').addEventListener('click', () => {
-        step = 1;
-        showStep(step);
       });
 
       document.getElementById('back-step-3').addEventListener('click', () => {
@@ -309,35 +286,17 @@
         // });
 
         // Reset form
-        step = 1;
+        step = 2;
         selectedExam = null;
         selectedTherapist = null;
         selectedDate = null;
         selectedTime = null;
         showStep(step);
-        renderExams();
+        renderTherapists();
       });
-      // Fetch patient data from the backend
-    //   fetch('/api/patients', {
-    //     headers: {
-    //       'Authorization': 'Bearer ' + localStorage.getItem('token') // Assuming the token is stored in localStorage
-    //     }
-    //   })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     if (data.length > 0) {
-    //       patientId = data[0].id; // Assuming the first patient is the one who filled the form
-    //     }
-    //   })
-    //   .catch(error => {
-    //     console.error('Error fetching patient data:', error);
-    //   });
-      renderExams();
+
       renderTherapists();
       renderDates();
-      console.log(selectedExam.name);
-      
-      window.open(`${selectedExam.name}.html`)
     });
   </script>
 </body>

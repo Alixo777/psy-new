@@ -151,7 +151,7 @@
         })
         .then(response => response.json())
         .then(result => {
-          window.open("chooseTherapist.html"); // Redirect to chooseTherapist.html
+          window.location.href = "/patienthome.html";
         })
         .catch(error => {
           alert(error);
