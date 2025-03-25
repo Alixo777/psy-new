@@ -26,18 +26,13 @@ formLogin.addEventListener("submit", (e) => {
   };
 
   fetch("/api/patients/login", requestOptions)
-    .then((response) => response.json())
-    .then((result) => {
-      
-      // localStorage.setItem("token", result.token);
-      console.log(result);
-      console.log(result.token);
-      
-
-      // Send email notification to the user after login
-      // sendEmailNotification(email);
-
-      // window.open("home.html");
+    .then((response) => {
+      if (response.status === 200) {
+        alert("התחברות בוצעה בהצלחה");
+        window.location.href = "/home.html";
+      } else {
+        alert("שגיאה בהתחברות");
+      }
     })
     // .catch((error) => console.error(error));
 });

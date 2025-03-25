@@ -2,13 +2,13 @@ const express = require('express');
 const bcrypt = require("bcrypt");
 
 const { auth } = require("../middlewares/auth");
-const {patientsModel, validatePatient, validLogin, createToken } = require('../models/patientsModel'); // Or whatever the correct name is
+const {PatientsModel, validatePatient, validLogin, createToken } = require('../models/patientsModel'); // Or whatever the correct name is
 const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
 router.get('/', auth, async (req, res) => {
-    let data = await patientsModel.find({});
+    let data = await PatientsModel.find({});
     res.json(data);
 });
 
@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Create a new patient with the provided fields
-      const newPatient = new patientsModel({
+      const newPatient = new PatientsModel({
           firstName,
           lastName,
           age,
@@ -70,7 +70,7 @@ router.post("/login", async (req, res) => {
 
   try {
       // Step 2: Find the patient by email
-      const patient = await patientsModel.findOne({ email });
+      const patient = await PatientsModel.findOne({ email });
       if (!patient) {
           return res.status(401).json({ msg: "Invalid email or password" });
       }
@@ -78,8 +78,8 @@ router.post("/login", async (req, res) => {
       console.log("end step 2")
 
       // Step 3: Compare the provided password with the stored hashed password
-      const isPasswordCorrect = bcrypt.compare(password, patient.password);
-      if (!isPasswordCorrect) {
+      const isPasswordCorrect = await bcrypt.compare(password, patient.password);
+       if (!isPasswordCorrect) {
           return res.status(401).json({ msg: "Invalid email or password" });
       }
       console.log("end step 3")
@@ -119,7 +119,7 @@ router.get("/myInfo", auth, async (req, res) => {
       // {password:0} -> יציג את כל המאפיינים חוץ מהסיסמא ואם זה 1
       // דווקא יציג רק אותו ולא יציג אחרים
       // 
-      let patient = await patientsModel.findOne({ _id: tokenData._id },
+      let patient = await PatientsModel.findOne({ _id: tokenData._id },
          { password: 0 });
       // אומר לא להציג את הסיסמא מתוך המאפיינים
       res.json(patient);
@@ -132,7 +132,7 @@ router.get("/myInfo", auth, async (req, res) => {
 
 router.delete("/:delId", async (req, res) => {
     let newDelId = req.params.delId;
-    let data = await patientsModel.deleteOne({ _id: newDelId });
+    let data = await PatientsModel.deleteOne({ _id: newDelId });
     res.json(data);
 });
 
@@ -147,7 +147,7 @@ router.put("/:id", async (req, res) => {
 
     try {
         // Find the patient by their ID and update their data
-        let updatedPatient = await patientsModel.findByIdAndUpdate(
+        let updatedPatient = await PatientsModel.findByIdAndUpdate(
             patientId,
             req.body,
             { new: true } // this option ensures the updated patient is returned
