@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Panic Exam</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin-top: 10px;
+      }
+      input[type="checkbox"] {
+        margin-top: 5px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Social Panic Exam</h1>
+      <form id="socialPanicExamForm">
+        <label>
+          <input type="checkbox" name="fearOfJudgmentInSocialSituations" /> פחד ממצב חברתי שבו אנשים עשויים לשפוט אותך
+        </label>
+        <label>
+          <input type="checkbox" name="fearOfHumiliationInSocialSituations" /> פחד שמעשיך יגרמו להשפלתך
+        </label>
+        <label>
+          <input type="checkbox" name="fearOfPhysicalSignsOfAnxietyBeingNoticed" /> פחד שאנשים יבחינו בכך שאתה מסמיק, מזיע, רועד או מראה סימני חרדה אחרים
+        </label>
+        <label>
+          <input type="checkbox" name="awarenessThatFearIsExaggeratedOrUnrealistic" /> הידיעה שהפחד שלך מוגזם או לא סביר
+        </label>
+        <label>
+          <input type="checkbox" name="constantAnxietyInSocialSituations" /> לחוש תמיד בחרדה
+        </label>
+        <label>
+          <input type="checkbox" name="avoidanceOfScarySocialSituations" /> להימנע מהשתתפות במצבים מפחידים
+        </label>
+        <label>
+          <input type="checkbox" name="disruptionToDailyLife" /> האם כל זה מפריע לחייך היום יומיים
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <script>
+      document.getElementById('socialPanicExamForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('/api/eachExams/socialPanic', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          alert(result.message);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    </script>
+  </body>
+</html>

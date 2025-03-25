@@ -1,0 +1,54 @@
+services:  
+  be:
+    container_name: be
+    build: 
+      context: .
+      dockerfile: ./build/backend/Dockerfile
+    # image: node:22
+    ports:
+      - 9229:9229
+      - 3003:3003
+    environment:
+      - MONGO_URL=${MONGO_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+
+
+  # be:
+  #   container_name: be
+  #   image: node:23-alpine
+  #   ports:
+  #     - 3003:3003
+  #   environment:
+  #     - MONGO_URL=${MONGO_URL}
+  #   volumes:
+  #     - ./:/app
+  #   command: tail -f /dev/null
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=project
+    volumes: 
+      - data:/data/db
+    ports:
+      - 27017:27017
+
+  mongo-express:
+    image: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=${MONGO_ROOT_USER}
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGOEXPRESS_LOGIN}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGOEXPRESS_PASSWORD}
+    depends_on:
+      - mongo
+    ports:
+      - "8888:8081"
+
+volumes:
+  data:

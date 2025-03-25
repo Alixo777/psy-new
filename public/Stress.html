@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stress Exam</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin-top: 10px;
+      }
+      input[type="checkbox"] {
+        margin-top: 5px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Stress Exam</h1>
+      <form id="stressExamForm">
+        <label>
+          <input type="checkbox" name="difficultyFallingAsleep" /> האם לא הצלחת להירדם?
+        </label>
+        <label>
+          <input type="checkbox" name="feelingsOfAnger" /> האם עלו בך תחושות של כעס ועצבים?
+        </label>
+        <label>
+          <input type="checkbox" name="difficultyStayingAsleep" /> האם התקשית להחזיק במצב של שינה?
+        </label>
+        <label>
+          <input type="checkbox" name="intrusiveFeelingsRelatedToEvent" /> האם חווית תחושות הקשורות למקרה בעקבות רמזים או אזכורים שלו?
+        </label>
+        <label>
+          <input type="checkbox" name="feelingThatEventWasUnreal" /> האם הרגשת כאילו המקרה לא היה באמת?
+        </label>
+        <label>
+          <input type="checkbox" name="intrusiveImagesOfEvent" /> האם פתאום עלו בראשך תמונות של המקרה?
+        </label>
+        <label>
+          <input type="checkbox" name="unwantedThoughtsAboutEvent" /> האם קפצו מחשבות על המקרה למרות שלא רצית לחשוב עליו?
+        </label>
+        <label>
+          <input type="checkbox" name="avoidanceOfThingsRemindingOfEvent" /> האם ניסית להימנע מלעשות דברים שיזכירו לך את המקרה?
+        </label>
+        <label>
+          <input type="checkbox" name="tryingNotToWorryAboutEvent" /> האם כאשר חשבת או נזכרת במקרה ניסית לא שלדאוג ממנו?
+        </label>
+        <label>
+          <input type="checkbox" name="beingEasilyStartled" /> האם במהלך אותו שבוע אירועים ומצבים שונים גרמו לך להיבהל, להיות זהיר או דרוך בקלות?
+        </label>
+        <label>
+          <input type="checkbox" name="overwhelmingFeelingsAboutEvent" /> האם תחושות חזקות על המקרה הציפו אותך בשבוע זה?
+        </label>
+        <label>
+          <input type="checkbox" name="avoidingThinkingAboutEvent" /> האם ניסית להימנע מלחשוב על המקרה?
+        </label>
+        <label>
+          <input type="checkbox" name="tryingToEraseEventFromMind" /> האם ניסית למחוק מהראש את המקרה?
+        </label>
+        <label>
+          <input type="checkbox" name="difficultyConcentrating" /> האם חווית קשיי ריכוז?
+        </label>
+        <label>
+          <input type="checkbox" name="emotionalNumbnessOrApathy" /> האם חשת תחושה של קהות או של רגשות מעומעמים לגבי המקרה?
+        </label>
+        <label>
+          <input type="checkbox" name="nightmaresAboutEvent" /> האם במהלך השינה הופיעו חלומות הקשורים לאותו אירוע?
+        </label>
+        <label>
+          <input type="checkbox" name="reExperiencingTheEvent" /> האם חשת או התנהגת כאילו המקרה קורה שוב?
+        </label>
+        <label>
+          <input type="checkbox" name="avoidingTalkingAboutEvent" /> האם ניסית להימנע מלשוחח על המקרה?
+        </label>
+        <label>
+          <input type="checkbox" name="awarenessOfUnresolvedEmotions" /> האם הייתה בך המודעות לכך שישנם רגשות שטרם התמודדות איתם בהקשר למקרה?
+        </label>
+        <label>
+          <input type="checkbox" name="physicalSymptomsFromEventCues" /> האם רמזים הנוגעים למקרה גרמו לך ל: דפיקות לב, הזעה, בחילה או קשיי נשימה?
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <script>
+      document.getElementById('stressExamForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('/api/eachExams/stress', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          alert(result.message);
+          window.location.href = 'chooseTherapist.html'; // Redirect to chooseTherapist.html
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    </script>
+  </body>
+</html>

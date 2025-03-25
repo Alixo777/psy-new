@@ -1,0 +1,1 @@
+docker exec mongo mongosh -u admin -p admin --eval "db = db.getSiblingDB('project'); db.createUser({user: 'admin', pwd: 'admin', roles: ['readWrite', 'dbAdmin']});"

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Self Confidence Exam</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin-top: 10px;
+      }
+      input[type="checkbox"] {
+        margin-top: 5px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Self Confidence Exam</h1>
+      <form id="selfConfidenceExamForm">
+        <label>
+          <input type="checkbox" name="difficultyInDecisionMaking" /> האם אתה מתקשה לקבל החלטות לבדך כי אתה לא סומך על עצמך?
+        </label>
+        <label>
+          <input type="checkbox" name="consultOthersForDecisions" /> האם בקבלת החלטה אתה מתייעץ עם אחרים ונוטה להחשיב את דעתם יותר מאשר את דעתך?
+        </label>
+        <label>
+          <input type="checkbox" name="doThingsForOthers" /> האם כאשר מישהו מבקש ממך משהו, אתה תיטה לבצע אותו גם אם לא מתחשק לך או אם אין לך זמן לכך?
+        </label>
+        <label>
+          <input type="checkbox" name="worriedAboutOthersOpinions" /> האם אתה עסוק בשאלה איך אנשים יגיבו לדבריך, למעשיך, מה הם חושבים עליך?
+        </label>
+        <label>
+          <input type="checkbox" name="adjustBehaviorToPleaseOthers" /> האם תכוון את התנהגותך, דיבורך, עפ"י דעתם של אחרים? האם אתה נוטה לרצות אחרים?
+        </label>
+        <label>
+          <input type="checkbox" name="feelWorthlessWhenFailing" /> האם כשאינך מצליח במשימה מסוימת זה מעורר בך תחושה שאתה לא שווה?
+        </label>
+        <label>
+          <input type="checkbox" name="attributeSuccessToExternalFactors" /> האם כשאתה מצליח במשימה מסויימת אתה נוטה לייחס זאת לנסיבות חיצוניות?
+        </label>
+        <label>
+          <input type="checkbox" name="successFeelsTakenForGranted" /> האם כשאתה מצליח במשימה מסויימת אתה רואה זאת כמובן מאליו, אבל כשאתה נכשל באותה משימה אתה רואה בכך כישלון אישי?
+        </label>
+        <label>
+          <input type="checkbox" name="mistakesAreIntolerable" /> האם טעויות שעשית נחוות בעיניך כבלתי נסבלות?
+        </label>
+        <label>
+          <input type="checkbox" name="avoidTasksDueToFearOfFailure" /> האם אתה נוטה לדחות משימות או להימנע מהן כי אתה חושש שמא לא תצליח בהן?
+        </label>
+        <label>
+          <input type="checkbox" name="fearOfRejectionInInterviews" /> האם כאשר אתה ניגש למשימות שדרושות קבלה או הכרה כמו ראיון עבודה או דייט, יש לך הרגשה שבטח לא יקבלו אותך?
+        </label>
+        <label>
+          <input type="checkbox" name="impostorSyndromeWithPositiveFeedback" /> האם כשאתה מקבל פידבק חיובי מאחרים אתה מרגיש תחושת זיוף?
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <script>
+      document.getElementById('selfConfidenceExamForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('/api/eachExams/selfConfidence', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          alert(result.message);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    </script>
+  </body>
+</html>

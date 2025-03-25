@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panic Exam</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin-top: 10px;
+      }
+      input[type="checkbox"] {
+        margin-top: 5px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Panic Exam</h1>
+      <form id="panicExamForm">
+        <label>
+          <input type="checkbox" name="dfeekutLev" /> דפיקות לב
+        </label>
+        <label>
+          <input type="checkbox" name="haza" /> הזעה
+        </label>
+        <label>
+          <input type="checkbox" name="kotzerNeshima" /> קוצר נשימה
+        </label>
+        <label>
+          <input type="checkbox" name="chnek" /> חנק
+        </label>
+        <label>
+          <input type="checkbox" name="keevBaLeiv" /> כאב בחזה
+        </label>
+        <label>
+          <input type="checkbox" name="bikhila" /> בחילה או אי נוחות בבטן
+        </label>
+        <label>
+          <input type="checkbox" name="chulshaBaRaglayim" /> חולשה ברגליים
+        </label>
+        <label>
+          <input type="checkbox" name="sachraza" /> סחרחורת
+        </label>
+        <label>
+          <input type="checkbox" name="tachushaLoMetsuyanit" /> תחושה לא מציאותית או תחושה שאתה מנותק מעצמך
+        </label>
+        <label>
+          <input type="checkbox" name="tachushaShalAvodShilKontrol" /> תחושה של איבוד שליטה, שאתה משתגע
+        </label>
+        <label>
+          <input type="checkbox" name="pachadMiMavet" /> פחד ממוות
+        </label>
+        <label>
+          <input type="checkbox" name="akutzut" /> עקצוץ
+        </label>
+        <label>
+          <input type="checkbox" name="tzmaromot" /> צמרמורת או גלי חום
+        </label>
+        <label>
+          <input type="checkbox" name="pachadMiMekomot" /> פחד ממקומות או מצבים שבהם יהיה קשה להשיג עזרה או להמלט מהם
+        </label>
+        <label>
+          <input type="checkbox" name="loYacholLeNasea" /> אינך יכול לנסוע ללא ליווי
+        </label>
+        <label>
+          <input type="checkbox" name="pachadMiAtaF" /> פחד מהתקף לב או דאגה שאתה "משתגע"
+        </label>
+        <label>
+          <input type="checkbox" name="shinuiBehitnagut" /> שינית את התנהגותך בשל ההתקף
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <script>
+      localStorage.getItem('token')
+      document.getElementById('panicExamForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('/api/eachExams/panic', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          alert(result.message);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    </script>
+  </body>
+</html>

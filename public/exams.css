@@ -1,0 +1,36 @@
+body {
+    background-color: #121212;
+    color: rgb(128, 128, 128);
+}
+
+header {
+    display: flex;
+    align-items: center;
+}
+
+a {
+    font-size: 0.5em;
+}
+
+nav {
+    display: flex;
+    justify-content: left;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+main {
+    min-height: 600px;
+    background-color: #433333;
+}
+
+.container {
+    color: #2e2e2e;
+}
+
+

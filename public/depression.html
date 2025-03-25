@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Depression Exam</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin-top: 10px;
+      }
+      select {
+        margin-top: 5px;
+        padding: 5px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Depression Exam</h1>
+      <form id="depressionExamForm">
+        <label for="internalSadness">תחושת עצבות פנימית</label>
+        <select id="internalSadness" name="internalSadness">
+          <option value="כן">כן</option>
+          <option value="לעיתים קרובות">לעיתים קרובות</option>
+          <option value="מדי פעם">מדי פעם</option>
+          <option value="לא">לא</option>
+        </select>
+
+        <label for="internalTension">מתח פנימי</label>
+        <select id="internalTension" name="internalTension">
+          <option value="כן">כן</option>
+          <option value="לעיתים קרובות">לעיתים קרובות</option>
+          <option value="מדי פעם">מדי פעם</option>
+          <option value="לא">לא</option>
+        </select>
+
+        <label for="lossOfInterest">אובדן עניין והנאה</label>
+        <select id="lossOfInterest" name="lossOfInterest">
+          <option value="כן">כן</option>
+          <option value="לעיתים קרובות">לעיתים קרובות</option>
+          <option value="מדי פעם">מדי פעם</option>
+          <option value="לא">לא</option>
+        </select>
+
+        <label for="pessimisticThoughts">מחשבות פסימיות</label>
+        <select id="pessimisticThoughts" name="pessimisticThoughts">
+          <option value="כן">כן</option>
+          <option value="לעיתים קרובות">לעיתים קרובות</option>
+          <option value="מדי פעם">מדי פעם</option>
+          <option value="לא">לא</option>
+        </select>
+
+        <label for="suicidalThoughts">מחשבות אובדניות</label>
+        <select id="suicidalThoughts" name="suicidalThoughts">
+          <option value="כן">כן</option>
+          <option value="לעיתים קרובות">לעיתים קרובות</option>
+          <option value="מדי פעם">מדי פעם</option>
+          <option value="לא">לא</option>
+        </select>
+
+        <label for="concentrationDifficulties">קשיי ריכוז</label>
+        <select id="concentrationDifficulties" name="concentrationDifficulties">
+          <option value="כן">כן</option>
+          <option value="לעיתים קרובות">לעיתים קרובות</option>
+          <option value="מדי פעם">מדי פעם</option>
+          <option value="לא">לא</option>
+        </select>
+
+        <label for="fatigue">תשישות</label>
+        <select id="fatigue" name="fatigue">
+          <option value="כן">כן</option>
+          <option value="לעיתים קרובות">לעיתים קרובות</option>
+          <option value="מדי פעם">מדי פעם</option>
+          <option value="לא">לא</option>
+        </select>
+
+        <label for="othersNoticeSadness">מעירים לך שאתה נראה עצוב</label>
+        <select id="othersNoticeSadness" name="othersNoticeSadness">
+          <option value="כן">כן</option>
+          <option value="לעיתים קרובות">לעיתים קרובות</option>
+          <option value="מדי פעם">מדי פעם</option>
+          <option value="לא">לא</option>
+        </select>
+
+        <label for="insomnia">נדודי שינה</label>
+        <select id="insomnia" name="insomnia">
+          <option value="כן">כן</option>
+          <option value="לעיתים קרובות">לעיתים קרובות</option>
+          <option value="מדי פעם">מדי פעם</option>
+          <option value="לא">לא</option>
+        </select>
+
+        <label for="lackOfAppetite">חוסר תאבון</label>
+        <select id="lackOfAppetite" name="lackOfAppetite">
+          <option value="כן">כן</option>
+          <option value="לעיתים קרובות">לעיתים קרובות</option>
+          <option value="מדי פעם">מדי פעם</option>
+          <option value="לא">לא</option>
+        </select>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <script>
+      document.getElementById('depressionExamForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('/api/eachExams/depression', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          window.open("chooseTherapist.html"); // Redirect to chooseTherapist.html
+        })
+        .catch(error => {
+          alert(error);
+          console.error('Error:', error);
+        });
+      });
+    </script>
+  </body>
+</html>
