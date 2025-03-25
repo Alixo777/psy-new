@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Exam Booking System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <style>
+    .step-active {
+      background-color: #2563eb;
+      color: white;
+    }
+    .step-inactive {
+      background-color: #e5e7eb;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
+    <div id="progress-indicator" class="mb-8 flex items-center justify-between">
+      <div class="flex items-center">
+        <div id="step-1-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-active">1</div>
+        <span class="ml-2 text-sm font-medium">Choose Exam</span>
+      </div>
+      <div class="flex-1 h-px bg-gray-300 mx-4"></div>
+      <div class="flex items-center">
+        <div id="step-2-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-inactive">2</div>
+        <span class="ml-2 text-sm font-medium">Select Therapist</span>
+      </div>
+      <div class="flex-1 h-px bg-gray-300 mx-4"></div>
+      <div class="flex items-center">
+        <div id="step-3-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-inactive">3</div>
+        <span class="ml-2 text-sm font-medium">Schedule</span>
+      </div>
+      <div class="flex-1 h-px bg-gray-300 mx-4"></div>
+      <div class="flex items-center">
+        <div id="step-4-indicator" class="w-8 h-8 rounded-full flex items-center justify-center step-inactive">4</div>
+        <span class="ml-2 text-sm font-medium">Confirm</span>
+      </div>
+    </div>
+
+    <div id="step-1" class="step">
+      <h2 class="text-2xl font-bold mb-4">Select an Exam</h2>
+      <div id="exam-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      <div class="mt-6 flex justify-end">
+        <button id="next-step-1" class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300" disabled>Next</button>
+      </div>
+    </div>
+
+    <div id="step-2" class="step hidden">
+      <h2 class="text-2xl font-bold mb-4">Select a Therapist</h2>
+      <div id="therapist-list" class="space-y-4"></div>
+      <div class="mt-6 flex justify-between">
+        <button id="back-step-2" class="px-4 py-2 border border-gray-300 rounded-lg">Back</button>
+        <button id="next-step-2" class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300" disabled>Next</button>
+      </div>
+    </div>
+
+    <div id="step-3" class="step hidden">
+      <h2 class="text-2xl font-bold mb-4">Select Date and Time</h2>
+      <div class="mb-6">
+        <div class="flex items-center mb-4">
+          <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <h3 class="font-semibold">Available Dates</h3>
+        </div>
+        <div id="date-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2"></div>
+      </div>
+      <div id="time-slot-section" class="hidden">
+        <h3 class="font-semibold mb-3">Available Times</h3>
+        <div id="time-slot-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"></div>
+      </div>
+      <div class="mt-6 flex justify-between">
+        <button id="back-step-3" class="px-4 py-2 border border-gray-300 rounded-lg">Back</button>
+        <button id="next-step-3" class="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300" disabled>Next</button>
+      </div>
+    </div>
+
+    <div id="step-4" class="step hidden">
+      <h2 class="text-2xl font-bold mb-4">Confirm Your Exam</h2>
+      <div class="bg-gray-50 p-6 rounded-lg">
+        <div class="mb-4">
+          <h3 class="text-gray-500 text-sm">Exam</h3>
+          <p id="confirm-exam-name" class="font-medium"></p>
+          <p id="confirm-exam-details" class="text-sm text-gray-600"></p>
+        </div>
+        <div class="mb-4">
+          <h3 class="text-gray-500 text-sm">Therapist</h3>
+          <p id="confirm-therapist-name" class="font-medium"></p>
+          <p id="confirm-therapist-specialty" class="text-sm text-gray-600"></p>
+        </div>
+        <div class="mb-4">
+          <h3 class="text-gray-500 text-sm">Date & Time</h3>
+          <p id="confirm-date-time" class="font-medium"></p>
+        </div>
+      </div>
+      <div class="mt-6 flex justify-between">
+        <button id="back-step-4" class="px-4 py-2 border border-gray-300 rounded-lg">Back</button>
+        <button id="confirm-booking" class="px-4 py-2 bg-green-600 text-white rounded-lg">Confirm Exam</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let step = 1;
+      let selectedExam = null;
+      let selectedTherapist = null;
+      let selectedDate = null;
+      let selectedTime = null;
+
+      const exams = [
+        { id: 1, name: 'Panic', duration: '30 min', price: '$120' },
+        { id: 2, name: 'Depression', duration: '45 min', price: '$90' },
+        { id: 3, name: 'Self Confidence', duration: '90 min', price: '$180' },
+        { id: 4, name: 'Social Panic', duration: '30 min', price: '$75' },
+        { id: 5, name: 'Stress', duration: '30 min', price: '$75' }
+
+      ];
+
+      const therapists = [
+        { id: 1, name: 'Dr. Sarah Johnson', specialty: 'General Medicine', rating: 4.9 },
+        { id: 2, name: 'Dr. Michael Chen', specialty: 'Radiology', rating: 4.8 },
+        { id: 3, name: 'Dr. Emily Rodriguez', specialty: 'Cardiology', rating: 4.7 }
+      ];
+
+      const dates = Array.from({ length: 14 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() + i);
+        return date;
+      });
+
+      const timeSlots = ['9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM'];
+
+      const formatDate = (date) => {
+        return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      };
+
+      const updateProgressIndicator = () => {
+        document.querySelectorAll('.step-active').forEach(el => el.classList.remove('step-active'));
+        document.querySelectorAll('.step-inactive').forEach(el => el.classList.remove('step-inactive'));
+        for (let i = 1; i <= 4; i++) {
+          const indicator = document.getElementById(`step-${i}-indicator`);
+          if (i <= step) {
+            indicator.classList.add('step-active');
+          } else {
+            indicator.classList.add('step-inactive');
+          }
+        }
+      };
+
+      const showStep = (stepNumber) => {
+        document.querySelectorAll('.step').forEach(el => el.classList.add('hidden'));
+        document.getElementById(`step-${stepNumber}`).classList.remove('hidden');
+        updateProgressIndicator();
+      };
+
+      const renderExams = () => {
+        const examList = document.getElementById('exam-list');
+        examList.innerHTML = '';
+        exams.forEach(exam => {
+          const examDiv = document.createElement('div');
+          examDiv.className = `p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition ${selectedExam?.id === exam.id ? 'border-blue-500 bg-blue-50' : ''}`;
+          examDiv.innerHTML = `
+            <h3 class="font-semibold text-lg">${exam.name}</h3>
+            <div class="mt-2 text-gray-600">Duration: ${exam.duration}</div>
+            <div class="text-gray-600">Price: ${exam.price}</div>
+          `;
+          examDiv.addEventListener('click', () => {
+            selectedExam = exam;
+            renderExams();
+            document.getElementById('next-step-1').disabled = false;
+          });
+          examList.appendChild(examDiv);
+        });
+      };
+
+      const renderTherapists = () => {
+        const therapistList = document.getElementById('therapist-list');
+        therapistList.innerHTML = '';
+        therapists.forEach(therapist => {
+          const therapistDiv = document.createElement('div');
+          therapistDiv.className = `p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition ${selectedTherapist?.id === therapist.id ? 'border-blue-500 bg-blue-50' : ''}`;
+          therapistDiv.innerHTML = `
+            <h3 class="font-semibold text-lg">${therapist.name}</h3>
+            <div class="mt-2 text-gray-600">Specialty: ${therapist.specialty}</div>
+            <div class="text-gray-600">Rating: ${therapist.rating}/5.0</div>
+          `;
+          therapistDiv.addEventListener('click', () => {
+            selectedTherapist = therapist;
+            renderTherapists();
+            document.getElementById('next-step-2').disabled = false;
+          });
+          therapistList.appendChild(therapistDiv);
+        });
+      };
+
+      const renderDates = () => {
+        const dateList = document.getElementById('date-list');
+        dateList.innerHTML = '';
+        dates.forEach((date, index) => {
+          const dateDiv = document.createElement('div');
+          dateDiv.className = `p-3 border rounded-md text-center cursor-pointer hover:border-blue-500 transition ${selectedDate && date.toDateString() === selectedDate.toDateString() ? 'border-blue-500 bg-blue-50' : ''}`;
+          dateDiv.innerHTML = `
+            <div class="font-medium">${date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+            <div class="text-lg">${date.getDate()}</div>
+            <div class="text-xs">${date.toLocaleDateString('en-US', { month: 'short' })}</div>
+          `;
+          dateDiv.addEventListener('click', () => {
+            selectedDate = date;
+            renderDates();
+            document.getElementById('time-slot-section').classList.remove('hidden');
+            renderTimeSlots();
+          });
+          dateList.appendChild(dateDiv);
+        });
+      };
+
+      const renderTimeSlots = () => {
+        const timeSlotList = document.getElementById('time-slot-list');
+        timeSlotList.innerHTML = '';
+        timeSlots.forEach((time, index) => {
+          const timeSlotDiv = document.createElement('div');
+          timeSlotDiv.className = `p-2 border rounded-md text-center cursor-pointer hover:border-blue-500 transition ${selectedTime === time ? 'border-blue-500 bg-blue-50' : ''}`;
+          timeSlotDiv.innerHTML = time;
+          timeSlotDiv.addEventListener('click', () => {
+            selectedTime = time;
+            renderTimeSlots();
+            document.getElementById('next-step-3').disabled = false;
+          });
+          timeSlotList.appendChild(timeSlotDiv);
+        });
+      };
+
+      const renderConfirmation = () => {
+        document.getElementById('confirm-exam-name').textContent = selectedExam.name;
+        document.getElementById('confirm-exam-details').textContent = `Duration: ${selectedExam.duration} • Price: ${selectedExam.price}`;
+        document.getElementById('confirm-therapist-name').textContent = selectedTherapist.name;
+        document.getElementById('confirm-therapist-specialty').textContent = selectedTherapist.specialty;
+        document.getElementById('confirm-date-time').textContent = `${formatDate(selectedDate)} at ${selectedTime}`;
+      };
+
+      document.getElementById('next-step-1').addEventListener('click', () => {
+        step = 2;
+        showStep(step);
+      });
+
+      document.getElementById('next-step-2').addEventListener('click', () => {
+        step = 3;
+        showStep(step);
+      });
+
+      document.getElementById('next-step-3').addEventListener('click', () => {
+        step = 4;
+        showStep(step);
+        renderConfirmation();
+      });
+
+      document.getElementById('back-step-2').addEventListener('click', () => {
+        step = 1;
+        showStep(step);
+      });
+
+      document.getElementById('back-step-3').addEventListener('click', () => {
+        step = 2;
+        showStep(step);
+      });
+
+      document.getElementById('back-step-4').addEventListener('click', () => {
+        step = 3;
+        showStep(step);
+      });
+
+      document.getElementById('confirm-booking').addEventListener('click', () => {
+        alert(`Exam booking confirmed!\n
+        Exam: ${selectedExam.name}\n
+        Therapist: ${selectedTherapist.name}\n
+        Date: ${formatDate(selectedDate)}\n
+        Time: ${selectedTime}`);
+        
+        // Reset form
+        step = 1;
+        selectedExam = null;
+        selectedTherapist = null;
+        selectedDate = null;
+        selectedTime = null;
+        showStep(step);
+        renderExams();
+      });
+
+      renderExams();
+      renderTherapists();
+      renderDates();
+    });
+  </script>
+</body>
+</html>
