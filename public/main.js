@@ -29,7 +29,12 @@ formLogin.addEventListener("submit", (e) => {
     .then((response) => {
       if (response.status === 200) {
         alert("התחברות בוצעה בהצלחה");
-        window.location.href = "/home.html";
+        let data = response.json()
+        .then((data) => {
+          console.log(data);
+          localStorage.setItem("token", data.token);
+          window.location.href = "/home.html";
+        });
       } else {
         alert("שגיאה בהתחברות");
       }
