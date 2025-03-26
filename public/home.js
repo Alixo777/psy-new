@@ -15,3 +15,51 @@ console.log(token);
 //     window.open = homepatient.html
 // }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.container-fluid'); // Updated selector
+
+    container.addEventListener('click', (event) => {
+        const targetDiv = event.target.closest('[class*="col-"]'); // Updated to target any column class
+        if (targetDiv) {
+            const h2 = targetDiv.querySelector('article > h2:first-child');
+            if (h2) {
+                const examName = h2.innerHTML.trim(); // Use innerHTML of the container name
+                localStorage.setItem('examName', examName); // Store examName in localStorage
+            }
+        }
+    });
+});
+
+function sendExamNameToBookingAPI() {
+    const examName = localStorage.getItem('examName'); // Retrieve examName from localStorage
+    if (examName) {
+        const formData = {
+            exam: 'Sample Exam', // Replace with actual exam data
+            therapist: 'Sample Therapist', // Replace with actual therapist data
+            date: new Date().toISOString(), // Replace with actual date
+            time: '10:00 AM', // Replace with actual time
+            examName: examName, // Send examName to the backend
+        };
+
+        fetch('/api/result/saveResult', { // Updated endpoint to saveResult
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Save result response:', data);
+        })
+        .catch(error => {
+            console.error('Error sending result data:', error);
+        });
+    } else {
+        console.error('No examName found in localStorage.');
+    }
+}
+
+// Call the function when needed, e.g., after a button click
+document.querySelector('#submitResultButton')?.addEventListener('click', sendExamNameToBookingAPI);
+

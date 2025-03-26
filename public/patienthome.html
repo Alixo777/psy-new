@@ -68,11 +68,6 @@
       <h2 class="text-2xl font-bold mb-4">Confirm Your Exam</h2>
       <div class="bg-gray-50 p-6 rounded-lg">
         <div class="mb-4">
-          <h3 class="text-gray-500 text-sm">Exam</h3>
-          <p id="confirm-exam-name" class="font-medium"></p>
-          <p id="confirm-exam-details" class="text-sm text-gray-600"></p>
-        </div>
-        <div class="mb-4">
           <h3 class="text-gray-500 text-sm">Therapist</h3>
           <p id="confirm-therapist-name" class="font-medium"></p>
           <p id="confirm-therapist-specialty" class="text-sm text-gray-600"></p>
@@ -90,28 +85,15 @@
   </div>
 
   <script>
-    let token = localStorage.getItem("token")
-    console.log(token);
     document.addEventListener('DOMContentLoaded', () => {
       let step = 2;
-      let selectedExam = null;
       let selectedTherapist = null;
       let selectedDate = null;
       let selectedTime = null;
-      let patientId = null;
-
-      const exams = [
-    { id: 1, name: 'Panic' , imageSrc: "images/a_girl_panicking.jpeg", alt: "Panic flag", link: "Panic.html"},
-    { id: 2, name: 'Deppression' , imageSrc: "images/depression.jpeg",alt: "Depression flag",link: "depression.html"},
-    { id: 3, name: 'Self Confidence' , imageSrc: "images/self_confidence.jpeg",alt: "Self Confidence flag",link: "SelfConfidence.html"},
-    { id: 4, name: 'Social Panic' ,imageSrc: "images/panic_attack.jpeg",alt: "Social Panic flag",link: "SocialPanic.html" },
-    { id: 5, name: 'Stress' , imageSrc: "images/stress_situation.jpeg",alt: "Stress flag",link: "Stress.html"},
-
-  ];
 
       const therapists = [
-        { id: 1, name: 'Dr. Sarah Johnson', specialty: 'General Medicine', rating: 4.9 },
-        { id: 2, name: 'Dr. Michael Chen', specialty: 'Radiology', rating: 4.8 },
+        { id: 1, name: 'זיגמונד פרויד', specialty: 'General Medicine', rating: 4.9 },
+        { id: 2, name: 'אנה פרויד', specialty: 'Radiology', rating: 4.8 },
         { id: 3, name: 'Dr. Emily Rodriguez', specialty: 'Cardiology', rating: 4.7 }
       ];
 
@@ -144,26 +126,6 @@
         document.querySelectorAll('.step').forEach(el => el.classList.add('hidden'));
         document.getElementById(`step-${stepNumber}`).classList.remove('hidden');
         updateProgressIndicator();
-      };
-
-      const renderExams = () => {
-        const examList = document.getElementById('exam-list');
-        examList.innerHTML = '';
-        exams.forEach(exam => {
-          const examDiv = document.createElement('div');
-          examDiv.className = `p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition ${selectedExam?.id === exam.id ? 'border-blue-500 bg-blue-50' : ''}`;
-          examDiv.innerHTML = `
-            <h3 class="font-semibold text-lg">${exam.name}</h3>
-            <div class="mt-2 text-gray-600"><img src=${exam.imageSrc} height="50px" width="200px"></div>
-            
-          `;
-          examDiv.addEventListener('click', () => {
-            selectedExam = exam;
-            renderExams();
-            document.getElementById('next-step-2').disabled = false;
-          });
-          examList.appendChild(examDiv);
-        });
       };
 
       const renderTherapists = () => {
@@ -224,8 +186,6 @@
       };
 
       const renderConfirmation = () => {
-        document.getElementById('confirm-exam-name').textContent = selectedExam.name;
-        document.getElementById('confirm-exam-details').textContent = `imageSrc: ${selectedExam.imageSrc}`;
         document.getElementById('confirm-therapist-name').textContent = selectedTherapist.name;
         document.getElementById('confirm-therapist-specialty').textContent = selectedTherapist.specialty;
         document.getElementById('confirm-date-time').textContent = `${formatDate(selectedDate)} at ${selectedTime}`;
@@ -252,42 +212,41 @@
         showStep(step);
       });
 
-      document.getElementById('confirm-booking').addEventListener('click',  () => {
-    
+      document.getElementById('confirm-booking').addEventListener('click', () => {
         alert(`Exam booking confirmed!\n
-        Exam: ${selectedExam.name}\n
         Therapist: ${selectedTherapist.name}\n
         Date: ${formatDate(selectedDate)}\n
         Time: ${selectedTime}`);
 
-        // Post the booking data to the server
         const bookingData = {
-          examId: selectedExam.id,
-          therapistId: selectedTherapist.id,
+          exam: "Patient Exam Booking", // Example exam name
+          therapist: {
+            id: selectedTherapist.id,
+            name: selectedTherapist.name,
+            specialty: selectedTherapist.specialty,
+          },
           date: selectedDate,
           time: selectedTime,
-          patientId: patientId
+          clickedExamName: "Therapist Appointment" // Example clicked exam name
         };
 
-        // fetch('/api/data/bookExam', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': 'Bearer ' + localStorage.getItem('token') // Assuming the token is stored in localStorage
-        //   },
-        //   body: JSON.stringify(bookingData)
-        // })
-        // .then(response => response.json())
-        // .then(result => {
-        //   console.log('Booking confirmed:', result);
-        // })
-        // .catch(error => {
-        //   console.error('Error booking exam:', error);
-        // });
+        fetch('api/results/booking', { // Updated route
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+          },
+          body: JSON.stringify(bookingData),
+        })
+          .then(response => response.json())
+          .then(result => {
+            console.log('Booking confirmed:', result);
+          })
+          .catch(error => {
+            console.error('Error booking exam:', error);
+          });
 
-        // Reset form
         step = 2;
-        selectedExam = null;
         selectedTherapist = null;
         selectedDate = null;
         selectedTime = null;

@@ -15,10 +15,10 @@ exports.ExamsModel = mongoose.model("exams", examsSchema);
 // Validation schema for the Exams model
 const validateExam = (exam) => {
     const schema = Joi.object({
-        examCode: Joi.string().required(),
-        examTypeCode: Joi.string().required(),
+        examCode: Joi.string().allow(null),
+        examTypeCode: Joi.string().allow(null),
         patientId: Joi.string().required(),
-        tCode: Joi.string().required(),
+        tCode: Joi.string().allow(null),
         startDate: Joi.string().required(),
         checkDate: Joi.string().required()
     });
