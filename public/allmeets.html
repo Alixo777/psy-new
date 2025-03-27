@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Meets</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+  <div class="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
+    <h1 class="text-3xl font-bold mb-6">All Meets</h1>
+    <input id="filter-input" type="text" placeholder="Filter by patient or therapist name" class="mb-4 p-2 border rounded w-full">
+    <div id="meets-list" class="space-y-4"></div>
+  </div>
+
+  <!-- Popup Modal -->
+  <div id="meet-popup" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+      <h2 id="popup-title" class="text-xl font-bold mb-4"></h2>
+      <p id="popup-details" class="text-gray-700 mb-4"></p>
+      <button id="close-popup" class="px-4 py-2 bg-red-600 text-white rounded-lg">Close</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const meetsList = document.getElementById('meets-list');
+      const filterInput = document.getElementById('filter-input');
+      const popup = document.getElementById('meet-popup');
+      const popupTitle = document.getElementById('popup-title');
+      const popupDetails = document.getElementById('popup-details');
+      const closePopup = document.getElementById('close-popup');
+      let allMeets = [];
+
+      const renderMeets = (meets) => {
+        meetsList.innerHTML = '';
+        meets.forEach(meet => {
+          const therapistName = meet.therapistID?.firstName || 'Unknown Therapist';
+          const therapistSpecialty = meet.therapistID?.specialty || 'Unknown Specialty';
+          const patientName = `${meet.patientId?.firstName || 'Unknown'} ${meet.patientId?.lastName || ''}`.trim();
+          const patientPhone = meet.patientId?.phoneNumber || 'Unknown Phone';
+
+          const meetDiv = document.createElement('div');
+          meetDiv.className = 'p-4 border rounded-lg bg-gray-50';
+          meetDiv.innerHTML = `
+            <h3 class="font-semibold text-lg">${therapistName}</h3>
+            <p class="text-gray-600">Specialty: ${therapistSpecialty}</p>
+            <p class="text-gray-600">Date: ${meet.startDate || 'Unknown Date'}</p>
+            <p class="text-gray-600">Time: ${meet.time || 'Unknown Time'}</p>
+            <p class="text-gray-600">Patient: ${patientName}</p>
+            <p class="text-gray-600">Phone: ${patientPhone}</p>
+            <button class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg view-details">View Details</button>
+          `;
+          meetDiv.querySelector('.view-details').addEventListener('click', () => {
+            popupTitle.textContent = `Meet with ${therapistName}`;
+            popupDetails.textContent = `
+              Date: ${meet.startDate || 'Unknown Date'}
+              Time: ${meet.time || 'Unknown Time'}
+              Specialty: ${therapistSpecialty}
+              Patient: ${patientName}
+              Phone: ${patientPhone}
+              Notes: ${meet.notes || 'No additional notes'}
+            `;
+            popup.classList.remove('hidden');
+          });
+          meetsList.appendChild(meetDiv);
+        });
+      };
+
+      // Fetch meets from the database
+      fetch('/api/meets/getAllMeets')
+        .then(response => response.json())
+        .then(meets => {
+          allMeets = meets;
+          renderMeets(allMeets);
+        })
+        .catch(error => {
+          console.error('Error fetching meets:', error);
+          meetsList.innerHTML = '<p class="text-red-600">Failed to load meets.</p>';
+        });
+
+      // Filter meets by name
+      filterInput.addEventListener('input', (e) => {
+        const filterValue = e.target.value.toLowerCase();
+        const filteredMeets = allMeets.filter(meet => {
+          const therapistName = meet.therapistID?.firstName?.toLowerCase() || '';
+          const patientName = `${meet.patientId?.firstName || ''} ${meet.patientId?.lastName || ''}`.toLowerCase();
+          return therapistName.includes(filterValue) || patientName.includes(filterValue);
+        });
+        renderMeets(filteredMeets);
+      });
+
+      // Close popup
+      closePopup.addEventListener('click', () => {
+        popup.classList.add('hidden');
+      });
+    });
+  </script>
+</body>
+</html>

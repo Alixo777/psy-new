@@ -30,3 +30,27 @@ const validateMeet = (meet) => {
 };
 
 exports.validateMeet = validateMeet;
+
+// Function to save meetData to the database
+exports.saveMeetData = async (meetData) => {
+  try {
+    const meet = new exports.MeetsModel(meetData);
+    await meet.save();
+    return { success: true, data: meet };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+// Function to convert meetData to MeetsModel
+exports.convertToMeetsModel = (meetData) => {
+  return {
+    stressExamID: meetData.examType === 'stress' ? meetData.exam : null,
+    patientId: meetData.patient,
+    therapistID: meetData.therapistId, // Add therapist reference
+    meetCode: `MEET-${Date.now()}`, // Example meetCode generation
+    startDate: new Date().toISOString(), // Default to current date
+    meetNum: 1, // Default meet number
+    // Add other fields as needed
+  };
+};

@@ -3,6 +3,7 @@ const http = require('http');
 const express = require('express');
 const routers =  require("./routes/config_routes")
 const resultsRouter = require('./routes/results');
+const meetsRoute = require('./routes/meetsRoute');
 require('dotenv').config()
 require("./db/mongoConnect")
 
@@ -16,6 +17,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use('/api', routers)
 app.use('/api/results', resultsRouter)
+app.use('/api/meets', meetsRoute)
 
 const server = http.createServer(app);
 

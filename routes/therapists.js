@@ -15,6 +15,15 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/all', async (req, res) => {
+    try {
+        const therapists = await therapistsModel.find({});
+        res.json(therapists);
+    } catch (err) {
+        res.status(500).json({ msg: 'Error fetching all therapists', error: err.message });
+    }
+});
+
 router.post('/register', async (req, res) => {
   const { email, password, fullName, firstName, lastName, age, address, phoneNumber, tCode, img } = req.body;
 

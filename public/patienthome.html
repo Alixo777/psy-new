@@ -97,17 +97,11 @@
       StressExam : "" // get from exams collection
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       let step = 2;
       let selectedTherapist = null;
       let selectedDate = null;
       let selectedTime = null;
-
-      const therapists = [
-        { id: 1, name: 'זיגמונד פרויד', specialty: 'General Medicine', rating: 4.9 },
-        { id: 2, name: 'אנה פרויד', specialty: 'Radiology', rating: 4.8 },
-        { id: 3, name: 'Dr. Emily Rodriguez', specialty: 'Cardiology', rating: 4.7 }
-      ];
 
       const dates = Array.from({ length: 14 }, (_, i) => {
         const date = new Date();
@@ -140,20 +134,20 @@
         updateProgressIndicator();
       };
 
-      const renderTherapists = () => {
+      const renderTherapists = (therapists) => {
         const therapistList = document.getElementById('therapist-list');
         therapistList.innerHTML = '';
         therapists.forEach(therapist => {
           const therapistDiv = document.createElement('div');
-          therapistDiv.className = `p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition ${selectedTherapist?.id === therapist.id ? 'border-blue-500 bg-blue-50' : ''}`;
+          therapistDiv.className = `p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition ${selectedTherapist?.tCode === therapist.tCode ? 'border-blue-500 bg-blue-50' : ''}`;
           therapistDiv.innerHTML = `
-            <h3 class="font-semibold text-lg">${therapist.name}</h3>
-            <div class="mt-2 text-gray-600">Specialty: ${therapist.specialty}</div>
-            <div class="text-gray-600">Rating: ${therapist.rating}/5.0</div>
+            <img src="${therapist.img || 'https://via.placeholder.com/150'}" alt="${therapist.firstName} ${therapist.lastName}" class="w-16 h-16 rounded-full mb-2">
+            <h3 class="font-semibold text-lg">${therapist.firstName} ${therapist.lastName}</h3>
+            <div class="mt-2 text-gray-600">Therapist Code: ${therapist.tCode}</div>
           `;
           therapistDiv.addEventListener('click', () => {
             selectedTherapist = therapist;
-            renderTherapists();
+            renderTherapists(therapists);
             document.getElementById('next-step-2').disabled = false;
           });
           therapistList.appendChild(therapistDiv);
@@ -198,8 +192,8 @@
       };
 
       const renderConfirmation = () => {
-        document.getElementById('confirm-therapist-name').textContent = selectedTherapist.name;
-        document.getElementById('confirm-therapist-specialty').textContent = selectedTherapist.specialty;
+        document.getElementById('confirm-therapist-name').textContent = `${selectedTherapist.firstName} ${selectedTherapist.lastName}`;
+        document.getElementById('confirm-therapist-specialty').textContent = `Therapist Code: ${selectedTherapist.tCode}`;
         document.getElementById('confirm-date-time').textContent = `${formatDate(selectedDate)} at ${selectedTime}`;
       };
 
@@ -223,50 +217,46 @@
         step = 3;
         showStep(step);
       });
-
+      let obj = JSON.parse(localStorage.getItem('meetData'));
       document.getElementById('confirm-booking').addEventListener('click', () => {
-        alert(`Exam booking confirmed!\n
-        Therapist: ${selectedTherapist.name}\n
-        Date: ${formatDate(selectedDate)}\n
-        Time: ${selectedTime}`);
+        const meetData = JSON.parse(localStorage.getItem('meetData'));
+        if (meetData) {
+          // Add therapist data to the payload
+          meetData.therapistId = selectedTherapist._id; // Save therapist ID
+          meetData.therapistName = `${selectedTherapist.firstName} ${selectedTherapist.lastName}`; // Optional: Save therapist name
 
-        const bookingData = {
-          exam: "Patient Exam Booking", // Example exam name
-          therapist: {
-            id: selectedTherapist.id,
-            name: selectedTherapist.name,
-            specialty: selectedTherapist.specialty,
-          },
-          date: selectedDate,
-          time: selectedTime,
-          clickedExamName: "Therapist Appointment" // Example clicked exam name
-        };
-
-        fetch('api/results/booking', { // Updated route
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-          },
-          body: JSON.stringify(bookingData),
-        })
-          .then(response => response.json())
-          .then(result => {
-            console.log('Booking confirmed:', result);
+          fetch('/api/meets/saveMeet', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(meetData),
           })
-          .catch(error => {
-            console.error('Error booking exam:', error);
-          });
-
-        step = 2;
-        selectedTherapist = null;
-        selectedDate = null;
-        selectedTime = null;
-        showStep(step);
-        renderTherapists();
+            .then(response => response.json())
+            .then(result => {
+              if (result.error) {
+                alert(`Error saving meet data: ${result.error}`);
+              } else {
+                alert('Meet data saved successfully!');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Failed to save meet data.');
+            });
+        } else {
+          alert('No meet data found in localStorage.');
+        }
       });
 
-      renderTherapists();
+      try {
+        const response = await fetch('/api/therapists/all');
+        const therapists = await response.json();
+        renderTherapists(therapists);
+      } catch (error) {
+        console.error('Error fetching therapists:', error);
+      }
+
       renderDates();
     });
   </script>
