@@ -116,6 +116,25 @@
     </div>
 
     <script>
+      let meetData = {};
+        fetch('/api/patients/myInfo', {
+          headers : {
+            'x-api-key': localStorage.getItem('token')
+          }
+        })
+        .then(response => response.json())
+        .then(result => {
+          meetData.patientID = result._id;
+          console.log(result);
+
+          
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // window.location.href = "/login.html";          
+
+        });
+
       document.getElementById('stressExamForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const data = {};
@@ -123,6 +142,7 @@
         event.target.querySelectorAll('input[type="checkbox"]').forEach(input => {
           data[input.name] = input.checked;
         });
+
         fetch('/api/eachExams/stress', {
           method: 'POST',
           headers: {
@@ -132,7 +152,13 @@
         })
         .then(response => response.json())
         .then(result => {
-          window.location.href = "/patienthome.html";
+          meetData = {
+            exam: result.exam._id,
+            examType: 'stress',
+            patient: meetData.patientID
+          };
+          localStorage.setItem('meetData', JSON.stringify(meetData));
+          window.location.href = "/patienthome.html";          
         })
         .catch(error => {
           console.error('Error:', error);

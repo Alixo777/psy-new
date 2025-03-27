@@ -20,6 +20,6 @@ app.use('/api/results', resultsRouter)
 const server = http.createServer(app);
 
 const PORT = 3003;
-console.log("PSY app is up");
+console.log("PSY app is up in 3003");
 
 server.listen(PORT);

@@ -103,23 +103,23 @@ router.get("/myInfo", auth, async (req, res) => {
     // הסיבה שעובדים מול הידר, שהוא גם מאובטח וגם נותן לשלוח עד 600 תווים
     // וגם עובד בבקשת גט לעומת באדי שלא עובד
     // req.query, req.params, req.body, req.header
-    let token = req.header("x-api-key");
-    console.log(token);
+    // let token = req.header("x-api-key");
+    // console.log(token);
     
-    if (!token) {
-      return res.status(401).json({ msg: "You need to send token to this endpoint url" })
-    }
+    // if (!token) {
+    //   return res.status(401).json({ msg: "You need to send token to this endpoint url" })
+    // }
     try {
       // מנסה לפענח את הטוקן ויכיל את כל המטען/מידע שבתוכו
-      let tokenData = jwt.verify(token, JWT_SECRET_KEY);
-      console.log(tokenData);
+    //   let tokenData = jwt.verify(token, JWT_SECRET_KEY);
+    //   console.log(tokenData);
   
   
       // עושה שאילתא של שליפת המידע מהמסד לפי האיי די שפוענח בטוקן
       // {password:0} -> יציג את כל המאפיינים חוץ מהסיסמא ואם זה 1
       // דווקא יציג רק אותו ולא יציג אחרים
       // 
-      let patient = await PatientsModel.findOne({ _id: tokenData._id },
+      let patient = await PatientsModel.findOne({ _id: req.tokenData._id },
          { password: 0 });
       // אומר לא להציג את הסיסמא מתוך המאפיינים
       res.json(patient);

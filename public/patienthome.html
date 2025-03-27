@@ -85,6 +85,18 @@
   </div>
 
   <script>
+    const meetingData = {
+      patientId: "", // get from mongo ObjectID
+      tcode: "", // get from therapist collection
+      startDate: "",
+      meetNum: 0,
+      DepressionExam: "",
+      PanicExam : "",
+      SelfConfidenceExam : "",
+      SocialPanicExam : "",
+      StressExam : "" // get from exams collection
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
       let step = 2;
       let selectedTherapist = null;
@@ -259,5 +271,5 @@
     });
   </script>
 </body>
-<script defer type="module" src="home.js"></script>
+<!-- <script defer type="module" src="home.js"></script> -->
 </html>

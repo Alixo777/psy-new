@@ -107,6 +107,25 @@
     </div>
 
     <script>
+      let meetData = {};
+        fetch('/api/patients/myInfo', {
+          headers : {
+            'x-api-key': localStorage.getItem('token')
+          }
+        })
+        .then(response => response.json())
+        .then(result => {
+          meetData.patientID = result._id;
+          console.log(result);
+
+          
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // window.location.href = "/login.html";          
+
+        });
+
       localStorage.getItem('token')
       document.getElementById('panicExamForm').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -126,7 +145,13 @@
         })
         .then(response => response.json())
         .then(result => {
-          window.location.href = "/patienthome.html";
+          meetData = {
+            exam: result.exam._id,
+            examType: 'panic',
+            patient: meetData.patientID
+          };
+          localStorage.setItem('meetData', JSON.stringify(meetData));
+          window.location.href = "/patienthome.html";          
         })
         .catch(error => {
           console.error('Error:', error);
