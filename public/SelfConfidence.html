@@ -131,7 +131,7 @@
         .then(result => {
           meetData = {
             exam: result.exam._id,
-            examType: 'Self Confidence',
+            examType: 'SelfConfidence',
             patient: meetData.patientID
           };
           localStorage.setItem('meetData', JSON.stringify(meetData));

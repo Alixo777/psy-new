@@ -34,6 +34,13 @@ exports.validateMeet = validateMeet;
 // Function to save meetData to the database
 exports.saveMeetData = async (meetData) => {
   try {
+    
+    // Find the latest meet for the patient to determine the next meetNum
+    const latestMeet = await exports.MeetsModel.findOne({ patientId: meetData.patientId })
+      .sort({ meetNum: -1 })
+      .exec();
+    meetData.meetNum = latestMeet ? latestMeet.meetNum + 1 : 1; // Increment or start at 1
+
     const meet = new exports.MeetsModel(meetData);
     await meet.save();
     return { success: true, data: meet };
@@ -46,6 +53,10 @@ exports.saveMeetData = async (meetData) => {
 exports.convertToMeetsModel = (meetData) => {
   return {
     stressExamID: meetData.examType === 'stress' ? meetData.exam : null,
+    panicExamID: meetData.examType === 'panic' ? meetData.exam : null,
+    depressionExamID: meetData.examType === 'depression' ? meetData.exam : null,
+    socialPanicExamID: meetData.examType === 'SocialPanic' ? meetData.exam : null,
+    selfConfidenceExamID: meetData.examType === 'SelfConfidence' ? meetData.exam : null,
     patientId: meetData.patient,
     therapistID: meetData.therapistId, // Add therapist reference
     meetCode: `MEET-${Date.now()}`, // Example meetCode generation

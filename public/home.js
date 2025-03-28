@@ -15,6 +15,12 @@ console.log(token);
 //     window.open = homepatient.html
 // }
 
+let first = localStorage.getItem(["fchar"]);
+
+let profileSpan = document.querySelector('.profile span');
+
+profileSpan.textContent = first.toUpperCase();;  
+
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.container-fluid'); // Updated selector
 
