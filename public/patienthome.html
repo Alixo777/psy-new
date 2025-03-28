@@ -6,6 +6,13 @@
   <title>Patient Exam Booking System</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
   <style>
+    html{
+      background-image: url('/images/sunset-beach-ai-generated.jpg'); /* Correct path to the image */
+      background-size: cover; /* Ensure the background covers the viewport */
+      background-position: center; /* Center the background */
+      background-attachment: fixed; /* Keep the background fixed even when scrolling */
+      background-repeat: no-repeat;
+    }
     .step-active {
       background-color: #2563eb;
       color: white;
@@ -15,7 +22,10 @@
     }
   </style>
 </head>
-<body class="bg-gray-100">
+<body>
+  <audio controls autoplay >
+    <source src="/snowfall_slowed.mp3">>
+</audio>
   <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
     <div id="progress-indicator" class="mb-8 flex items-center justify-between">
       <div class="flex-1 h-px bg-gray-300 mx-4"></div>
