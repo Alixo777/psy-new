@@ -130,12 +130,14 @@ const meetingData = {
       step = 3;
       showStep(step);
     });
+
     document.getElementById('confirm-booking').addEventListener('click', () => {
       const meetData = JSON.parse(localStorage.getItem('meetData'));
       if (meetData) {
-        // Add therapist data to the payload
+        // Add therapist and exact date/time data selected in step 3
         meetData.therapistId = selectedTherapist._id; // Save therapist ID
-        meetData.therapistName = `${selectedTherapist.firstName} ${selectedTherapist.lastName}`; // Optional: Save therapist name
+        meetData.date = selectedDate.toISOString().split('T')[0]; // Use selected date from step 3
+        meetData.time = selectedTime; // Use selected time from step 3
 
         fetch('/api/meets/saveMeet', {
           method: 'POST',
@@ -150,6 +152,8 @@ const meetingData = {
               alert(`Error saving meet data: ${result.error}`);
             } else {
               alert('Meet data saved successfully!');
+              // Redirect to allmeets.html after saving
+              window.location.href = '/allmeets.html';
             }
           })
           .catch(error => {

@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 
 let meetsSchema = new mongoose.Schema({
   meetCode: String,
-  startDate: String,
+  date: String, // Save exact date selected in the last step
+  time: String, // Save exact time selected in the last step
   meetNum: Number,
   patientId: { type: mongoose.Schema.Types.ObjectId, ref: 'patients' },
   therapistID: { type: mongoose.Schema.Types.ObjectId, ref: 'therapists' },
@@ -22,8 +23,9 @@ const validateMeet = (meet) => {
   const schema = Joi.object({
     meetCode: Joi.string().required(),
     patientId: Joi.string().required(), // Should be a valid ObjectId
-    tcode: Joi.string().required(),
-    startDate: Joi.string().required(),
+    therapistId: Joi.string().required(),
+    date: Joi.string().required(), // Validate exact date
+    time: Joi.string().required(), // Validate exact time
     meetNum: Joi.number().required()
   });
   return schema.validate(meet);
@@ -34,14 +36,18 @@ exports.validateMeet = validateMeet;
 // Function to save meetData to the database
 exports.saveMeetData = async (meetData) => {
   try {
-    
     // Find the latest meet for the patient to determine the next meetNum
     const latestMeet = await exports.MeetsModel.findOne({ patientId: meetData.patientId })
       .sort({ meetNum: -1 })
       .exec();
     meetData.meetNum = latestMeet ? latestMeet.meetNum + 1 : 1; // Increment or start at 1
 
-    const meet = new exports.MeetsModel(meetData);
+    // Ensure the time and date are exactly as chosen in the last step
+    const meet = new exports.MeetsModel({
+      ...meetData,
+      date: meetData.date, // Use the exact date from the last step
+      time: meetData.time, // Use the exact time from the last step
+    });
     await meet.save();
     return { success: true, data: meet };
   } catch (error) {
@@ -60,7 +66,8 @@ exports.convertToMeetsModel = (meetData) => {
     patientId: meetData.patient,
     therapistID: meetData.therapistId, // Add therapist reference
     meetCode: `MEET-${Date.now()}`, // Example meetCode generation
-    startDate: new Date().toISOString(), // Default to current date
+    date: meetData.date, // Use the exact date from the last step
+    time: meetData.time, // Use the exact time from the last step
     meetNum: 1, // Default meet number
     // Add other fields as needed
   };
