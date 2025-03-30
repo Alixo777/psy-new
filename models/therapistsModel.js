@@ -17,7 +17,7 @@ let therapistsSchema = new mongoose.Schema({
   },
   patients: [{ type: ObjectId, ref: 'patients' }], // Array of ObjectId referencing 'patients' collection
   // הוספת יוצר הרשומה 
-  // user_id:String
+  user_id:String,
   role:{
     type:String, default:"therapist"
   }
@@ -31,7 +31,7 @@ exports.createToken = (user_id) => {
   // מייצר טוקן, שם תכולה - "מטען" - שלו שזה איי די של המשתמש
   // מילה סודית שרק לנו מותר להכיר אותה
   // ותוקף  
-  let token = jwt.sign({_id:user_id}, process.env.JWT_SECRET_KEY,{expiresIn:"60mins"},{_role:user.role})
+  let token = jwt.sign({_id:user_id.toString()}, process.env.JWT_SECRET_KEY,{expiresIn:"60mins"},{_role:user.role})
   return token;
 }
 
