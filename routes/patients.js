@@ -1,6 +1,5 @@
 const express = require('express');
 const bcrypt = require("bcrypt");
-
 const { auth } = require("../middlewares/auth");
 const {PatientsModel, validatePatient, validLogin, createToken } = require('../models/patientsModel'); // Or whatever the correct name is
 const jwt = require("jsonwebtoken");
@@ -23,10 +22,10 @@ router.post('/register', async (req, res) => {
 
   try {
       // Step 2: Check if the patient already exists by email
-    //   const existingPatient = await patientsModel.findOne({ email });
-    //   if (existingPatient) {
-    //       return res.status(400).json({ msg: 'Email already registered' });
-    //   }
+      const existingPatient = await PatientsModel.findOne({ email });
+      if (existingPatient) {
+          return res.status(400).json({ msg: 'Email already registered' });
+      }
 
       // Hash the password before saving the patient
       const hashedPassword = await bcrypt.hash(password, 10);

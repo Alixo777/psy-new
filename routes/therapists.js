@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/',auth, async (req, res) => {
     try {
         let data = await therapistsModel.find({});
         res.json(data);
@@ -25,7 +25,7 @@ router.get('/all', async (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-  const { email, password, fullName, firstName, lastName, age, address, phoneNumber, tCode, img } = req.body;
+  const { email, password, firstName, lastName, tCode, img } = req.body;
 
   // Step 1: Basic validation using the existing validateTherapist function
   let validateBody = validateTherapist(req.body);
@@ -34,7 +34,7 @@ router.post('/register', async (req, res) => {
   }
 
   try {
-      // Step 2: Check if the therapist already exists by email
+    // Step 2: Check if the therapist already exists by email
       const existingtherapist = await therapistsModel.findOne({ email });
       if (existingtherapist) {
           return res.status(400).json({ msg: 'Email already registered' });
@@ -56,11 +56,8 @@ router.post('/register', async (req, res) => {
       // Save the new therapist to the database
       await newtherapist.save();
 
-      // Generate a JWT token for the newly registered therapist
-      const token = createToken(newtherapist);
-
       // Send back success response with the token
-      res.json({ message: 'Registration successful', token });
+      res.json({ message: 'Registration successful' });
 
   } catch (err) {
       res.status(500).json({ msg: 'Error during registration', error: err.message });
@@ -89,7 +86,7 @@ router.post("/login", async (req, res) => {
       }
 
       // Step 4: Generate a JWT token
-      const token = createToken(therapist);
+      const token = createToken(therapist); // Correctly use 'therapist' here
 
       // Step 5: Send the token as a response
       res.json({ message: "Login successful", token });
@@ -99,7 +96,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/myInfo", async (req, res) => {
+router.get("/myInfo", auth, async (req, res) => {
     let token = req.header("x-api-key");
 
     if (!token) {
@@ -107,8 +104,6 @@ router.get("/myInfo", async (req, res) => {
     }
 
     try {
-      let tokenData = jwt.verify(token, "PsySecret");
-
       let therapist = await therapistsModel.findOne({ _id: tokenData._id }, { password: 0 });
 
       res.json(therapist);
