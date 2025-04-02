@@ -152,8 +152,6 @@ const meetingData = {
               alert(`Error saving meet data: ${result.error}`);
             } else {
               alert('Meet data saved successfully!');
-              // Redirect to allmeets.html after saving
-              window.location.href = '/allmeets.html';
             }
           })
           .catch(error => {
