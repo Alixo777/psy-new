@@ -7,25 +7,42 @@
 
     <title>Login Form</title>
     <style>
-        /* Resetting some default styles */
+
+html {
+    background-image: url('images/pexels-karoldach-409696.jpg'); /* Correct path to the image */
+    background-size: cover; /* Ensure the background covers the viewport */
+    background-position: center; /* Center the background */
+    background-attachment: fixed; /* Keep the background fixed even when scrolling */
+    background-repeat: no-repeat;
+  }
+
+        /* Adjust body style for centering */
         body, html {
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
             height: 100%;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             background-color: #f2f2f2;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
-        /* Form container */
+        /* Enhanced form container styles */
         .form-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            width: 320px;
+            transition: transform 0.3s ease;
+        }
+
+        .form-container:hover {
+            transform: scale(1.02);
         }
 
         h2 {
@@ -46,10 +63,11 @@
             font-size: 16px;
         }
 
-        .form-container input[type="email"]:focus,
-        .form-container input[type="password"]:focus {
-            border-color: #4CAF50;
+        /* Improved input focus styles */
+        .form-container input:focus {
+            border-color: #388e3c;
             outline: none;
+            box-shadow: 0 0 5px rgba(56, 142, 60, 0.5);
         }
 
         /* Submit button styling */
@@ -64,8 +82,10 @@
             cursor: pointer;
         }
 
+        /* Enhanced button hover effect */
         .form-container button:hover {
-            background-color: #45a049;
+            background-color: #388e3c;
+            transform: scale(1.05);
         }
 
         /* Forgot password link */
@@ -79,7 +99,10 @@
             text-decoration: none;
         }
 
-        .form-container .forgot-password a:hover {
+        /* Improved link hover effect */
+        .form-container .forgot-password a:hover,
+        .form-container .sign-in a:hover {
+            color: #2e7d32;
             text-decoration: underline;
         }
 
